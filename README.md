@@ -1,9 +1,8 @@
-# ShearProbes_BenchmarkDescriptor
+# Shear Probes Benchmark Data Descriptor routines
 
 Matlab scripts to produce the ATOMIX Shear Probes subgroup benchmark dataset descriptor figures. The data descriptor manuscript is submitted to the Scientific Data (February 2024):
 
-Fer, I., M. Dengler, P. Holtermann, A. Le Boyer and R. Lueck. ATOMIX benchmark datasets for dissipation rate 
-measurements using shear probes.
+Fer, I., M. Dengler, P. Holtermann, A. Le Boyer and R. Lueck. ATOMIX benchmark datasets for dissipation rate measurements using shear probes.
 
 The routines were ran in MATLAB v2023a. The dependencies are included in a subfolder. The benchmark data files, in netCDF format, must be downloaded from the British Oceanographic Data Centre, following the citations below.
 
@@ -18,3 +17,7 @@ The routines were ran in MATLAB v2023a. The dependencies are included in a subfo
 
 <li> Lueck, R. & Hay, A. ATOMIX shear probes benchmark data: a dissipation profile from Minas Passage, Nova Scotia, Canada, obtained with a moored horizontal microstructure profiler in September 2016. NERC EDS British Oceanographic Data Centre NOC., https://doi.org/10.5285/0ec17274-7a64-2b28-e063-6c86abc0ee02 (2024). </li>
 </ol>
+
+# How to Cite
+
+Fer, I., M. Dengler, P. Holtermann, A. Le Boyer and R. Lueck (2024). ATOMIX Shear Probes benchmark data descriptor figures. Zenodo. https://doi.org/10.5281/zenodo.10610150.
