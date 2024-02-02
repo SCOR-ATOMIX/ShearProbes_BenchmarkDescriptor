@@ -1,7 +1,10 @@
 # Shear Probes Benchmark Data Descriptor routines
 
-Matlab scripts to produce the ATOMIX Shear Probes subgroup benchmark dataset descriptor figures. The data descriptor manuscript is submitted to the Scientific Data (February 2024):
+This repository contains a set of Matlab scripts to produce the ATOMIX Shear Probes subgroup benchmark dataset descriptor figures, and a Python script to check that the format and attributes of a netCDF dataset conform to the recommended ATOMIX format. 
 
+ATOMIX “Analyzing ocean turbulence observations to quantify mixing” is the Working Group 160 under the Scientific Committee on Oceanographic Research (SCOR). More details can be found on https://wiki.app.uib.no/atomix.
+
+The data descriptor manuscript is submitted to the Scientific Data (February 2024):<br>
 Fer, I., M. Dengler, P. Holtermann, A. Le Boyer and R. Lueck. ATOMIX benchmark datasets for dissipation rate measurements using shear probes.
 
 The routines were ran in MATLAB v2023a. The dependencies are included in a subfolder. The benchmark data files, in netCDF format, must be downloaded from the British Oceanographic Data Centre, following the citations below.
