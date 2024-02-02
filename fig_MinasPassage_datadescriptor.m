@@ -4,16 +4,22 @@
 % code template: Ilker Fer, University of Bergen, Norway
 % PI: Rolf Lueck, Rockland Scientific, Inc.
 % -----------------------------
+% -----------------------------
+% Data citation and where to download the netCDF file:
+% Lueck, R. & Hay, A. Atomix shear probes benchmark data: a dissipation profile from Minas Passage, Nova Scotia, Canada,
+% obtained with a moored horizontal microstructure profiler in September 2016. NERC EDS British Oceanographic Data Centre
+% NOC., https://doi.org/10.5285/0ec17274-7a64-2b28-e063-6c86abc0ee02 (2024).
+% -----------------------------
 
 clear
 %close all
 % add the folder with the dependencies to your path
-%addpath m_share
-% point to where the benchmark data file is, and load
+addpath m_share
+% point to where the downloaded benchmark NC data file is, and load
 data_path = 'C:\ILKER\Dropbox\ShearProbes\Data\Nemo_MR1000_Minas_Passage\' ;% ==> EDIT THIS
 %data_path = './'; % ==> EDIT THIS
 
-save_plot_flag = 1; % 0;  % ==> Set to 1 if you want to save the figure as a PDF file
+save_plot_flag = 0; % 1;  % ==> Set to 1 if you want to save the figure as a PDF file
 file_nc='Nemo_MR1000_Minas_Passage_InStream.nc';
 plot_out_name = 'Nemo_MR1000_Minas_Passage.pdf'; % ==> name of the PDF file to save
 
@@ -183,7 +189,7 @@ for I=1:length(picks)
     h2(1)=loglog(L3.KCYC(pick,:),L3.SH_SPEC_CLEAN(pick,:,2),'color',li(2,:));
     h3(1)=loglog(L3.KCYC(pick,:),L3.SH_SPEC_CLEAN(pick,:,3),'color',li(3,:));
     h4(1)=loglog(L3.KCYC(pick,:),L3.SH_SPEC_CLEAN(pick,:,4),'color',li(4,:));
-    ee = L4.EPSI_FINAL(pick);
+    ee = L4.EPSI_FINAL(pick)
     [nas,~] = lueck_spectrum(ee, L4.KVISC(pick),L3.KCYC(pick,:));
     h5(1)=loglog(L3.KCYC(pick,:),nas,'color',[.6 .6 .6],'linew',1.2);
 end

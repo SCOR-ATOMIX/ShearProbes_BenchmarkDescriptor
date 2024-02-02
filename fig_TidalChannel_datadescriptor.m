@@ -1,25 +1,36 @@
 % -----------------------------
-% A script to produce the Haro Starit Tidal Channel, ATOMIX benchmark 
-% descriptor figure
+% A script to produce the Haro Strait Tidal Channel,
+% ATOMIX benchmark data descriptor figure
 % Ilker Fer, University of Bergen, Norway
 % PI: Rolf Lueck, Rockland Scientific, Inc.
+% -----------------------------
+% -----------------------------
+% Data citation and where to download the netCDF file:
+% Lueck, R. ATOMIX shear probes benchmark data: a dissipation profile from Haro Strait, British Columbia, Canada
+% obtained with a vertical microstructure profiler in October 2016. NERC EDS British Oceanographic Data Centre NOC.,
+% https://doi.org/10.5285/0ec16a65-abdf-2822-e063-6c86abc06533 (2024).
 % -----------------------------
 
 clear
 close all
 % add the folder with the dependencies to your path
 addpath m_share
-% point to where the benchmark data file is, and load
+% point to where the downloaded benchmark NC data file is, and load
 %data_path = 'C:\users\ngfif\Dropbox\ShearProbes\Data\VMP250_TidalChannel\' % ==> EDIT THIS
 data_path = 'C:\ILKER\Dropbox\ShearProbes\Data\VMP250_TidalChannel\' % ==> EDIT THIS
 %data_path = './'; % ==> EDIT THIS
 
 save_plot_flag = 1;  % ==> Set to 1 if you want to save the figure as a PDF file
-file_nc='VMP250_TidalChannel_024.nc';
-plot_out_name = 'VMP250_TidalChannel.pdf'; % ==> name of the PDF file to save
-% file_nc='VMP250_TidalChannel_024_cs.nc';
-% plot_out_name = 'VMP250_TidalChannel_cs.pdf'; % ==> name of the PDF file to save
 
+% %Use this file for the version processed using theprofiling speed from rate of change of pressure:
+% file_nc='VMP250_TidalChannel_024.nc';
+% plot_out_name = 'VMP250_TidalChannel.pdf'; % ==> name of the PDF file to save
+
+% %Use this file for the version processed using a constant profiling speed:
+file_nc='VMP250_TidalChannel_024_cs.nc';
+plot_out_name = 'VMP250_TidalChannel_cs.pdf'; % ==> name of the PDF file to save
+
+% A wrapper to load the grouped NC file with ATOMIX levels, including attributes
 D = ATOMIX_load([data_path file_nc]); use D; clear D
 
 %%
@@ -45,7 +56,7 @@ ix_bad1_2     = find(L4.EPSI_FLAGS(:,1)+L4.EPSI_FLAGS(:,2)>0); % need these for 
 %pick2 = find(L4.FOM(:,1)<1.15 & L4.FOM(:,2)<1.15 & (L4.EPSI_FINAL>1e-6 & L4.EPSI_FINAL<3.3e-6) );
 % good spectra, hi eps
 %pick3 = find(L4.FOM(:,1)<1.15 & L4.FOM(:,2)<1.15 & (L4.EPSI_FINAL>1e-5 & L4.EPSI_FINAL<3.3e-5) );
-picks = [1 7]
+picks = [1 8]
 
 %%
 li = lines(6); % default colors of matlab... I'll force them just in case.
@@ -88,15 +99,12 @@ subaxis(4);
 h1=semilogy(TIME_ELAPSED_SEC_EPSI,L4.EPSI(:,1),'o','color',li(1,:),'markerfacecolor', li(1,:), 'markersize',3);
 hold on
 h2=semilogy(TIME_ELAPSED_SEC_EPSI,L4.EPSI(:,2),'^','color',li(2,:),'markerfacecolor', li(2,:), 'markersize',3);
-h3=semilogy(TIME_ELAPSED_SEC_EPSI,L4.EPSI_FINAL,'ks','markerfacecolor','w','markersize',3)
-% % add red crosses for the flagged values
-% semilogy(TIME_ELAPSED_SEC_EPSI(ix_bad1),L4.EPSI(ix_bad1,1),'rx','markersize',3);
-% semilogy(TIME_ELAPSED_SEC_EPSI(ix_bad2),L4.EPSI(ix_bad2,2),'rx','markersize',3);
+h3=semilogy(TIME_ELAPSED_SEC_EPSI,L4.EPSI_FINAL,'ks','markerfacecolor','w','markersize',3);
 
 
-% mark the picked epsifinal for spectra 
+% mark the picked epsifinal for spectra
 %hvl = vlines([TIME_ELAPSED_SEC_EPSI(picks)],'k')
-x=[TIME_ELAPSED_SEC_EPSI(picks)];   x=x(:)';  
+x=[TIME_ELAPSED_SEC_EPSI(picks)];   x=x(:)';
 ax=axis; y1=ax(3)*ones(size(x)); y2=ax(4)*ones(size(x));
 x=[x;x]; y=[y1;y2];
 hvl=plot(x,y); clear x y y1 y2 ax
@@ -129,7 +137,7 @@ align_ylabel(hyla,-0.07)
 %% add e1 vs e2 scatter plot
 xli = [0.5e-7 1e-4]; % set limits after first test....
 ax(5)=axes('position',[ax(1).Position(1) .06 .34 .37]);
-ax(5).XLim =xli; 
+ax(5).XLim =xli;
 
 
 h1=loglog(L4.EPSI(:,1),L4.EPSI(:,2),'^','color',li(2,:),'markerfacecolor',li(2,:),'markersize',3);
@@ -167,7 +175,7 @@ for I=1:2
     h1(1)=loglog(L3.KCYC(pick,:),L3.SH_SPEC_CLEAN(pick,:,1),'color',li(1,:));
     hold on
     h2(1)=loglog(L3.KCYC(pick,:),L3.SH_SPEC_CLEAN(pick,:,2),'color',li(2,:));
-    ee = L4.EPSI_FINAL(pick);
+    ee = L4.EPSI_FINAL(pick) % list dissipation estimates for the figure caption
     [nas,~] = lueck_spectrum(ee, L4.KVISC(pick),L3.KCYC(pick,:));
     h3(1)=loglog(L3.KCYC(pick,:),nas,'color',[.6 .6 .6],'linew',1.2);
 end
