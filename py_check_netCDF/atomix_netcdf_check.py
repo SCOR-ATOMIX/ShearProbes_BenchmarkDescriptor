@@ -19,7 +19,7 @@ import netCDF4
 from atomix_structure import atomix_structure
 
 
-version= '0.5'
+version= '0.6'
 # Setup logging module
 logging.basicConfig(stream=sys.stderr, level=logging.DEBUG)
 logger = logging.getLogger('atomix')
@@ -27,7 +27,48 @@ logger = logging.getLogger('atomix')
 
 
 
-def atomix_check_requirements_variables(nc, datalevel = None, req_levels=['required','highly-recommended','optional']):
+def atomix_atomix_structure_csv(req_levels=['required','highly-recommended','optional']):
+    """
+        Prints the atomix structure in a csv format
+
+        Returns:
+
+    """
+
+    print('ATOMIX Version:\n{:s}\n'.format(atomix_structure['info']['version']))
+    print('ATOMIX Version description:\n{:s}\n'.format(atomix_structure['info']['version_description']))
+    print('================ Dimensions =================')
+    for dlevel in atomix_structure['datalevels'].keys():
+        datalevel = atomix_structure['datalevels'][dlevel]
+        # DIMENSIONS
+        DIMENSIONS = datalevel['DIMENSIONS']
+        print('------')
+        for dimname in DIMENSIONS:
+            print(' "{:s}" , "{:s}" , "{:s}"'.format(dimname,dlevel,DIMENSIONS[dimname]['description']))
+
+    print('================ Variables =================')
+    for dlevel in atomix_structure['datalevels'].keys():
+        # Print the Variables
+        datalevel = atomix_structure['datalevels'][dlevel]
+        VARIABLES = datalevel['VARIABLES']
+        print('------')
+        for req in req_levels:
+            for varname in VARIABLES:
+                var = VARIABLES[varname]
+                # print(var,varname)
+                if var['required'] == req:  # Check if the requirement level fits
+                    stdname = var['standard_name']
+                    units = var['units']
+                    dims = ''
+                    for d in var['DIMENSIONS']:
+                        #print('var',varname,'d',d)
+                        dims += d['name'] + ';'
+
+                    dims = dims[:-1]
+                    print('"{:s}","{:s}","{:s}","{:s}","{:s}","{:s}"'.format(varname,dlevel,req,stdname,units,dims))
+
+
+def atomix_check_requirements_variables(nc, datalevel = None, req_levels=['required','highly-recommended','optional'], plot_found = False):
     """
     Checks if the netCDF file fulfills the requirements of an Atomix netCDF file.
 
@@ -92,7 +133,8 @@ def atomix_check_requirements_variables(nc, datalevel = None, req_levels=['requi
                   if var in variable_required[g]:
                       flag_atomix_standard = True
                       variables_req_found[g].append(var)
-                      logger.info(' Lev. {:s}\t Variable found {:s}'.format(g, var))
+                      if plot_found:
+                          logger.info(' Lev. {:s}\t Variable found {:s}'.format(g, var))
 
               # Check the variable that have not been found
               for var_atomix in variable_required[g]:
@@ -121,13 +163,7 @@ def atomix_check_requirements_variables(nc, datalevel = None, req_levels=['requi
                           else:
                               variables_req_notfound[g].append(var_atomix)                                  
 
-
-
                       print('Or variables list',variables_req_notfound_but_or_existing[g])
-
-
-
-
 
               if len(variables_req_notfound[g]) == 0:
                   logger.info(' Lev. {:s}\t ALL {:s} variables found'.format(g, req_level))
@@ -143,7 +179,7 @@ def atomix_check_requirements_variables(nc, datalevel = None, req_levels=['requi
                   #logger.info(funcname + ' Group: {:s}: MISSING {:s} variables: {:s} '.format(g, req_level, str(variables_req_notfound[g])))
                   #logger.info(funcname + ' Group: {:s}: {:s} variables found: {:s}'.format(g, req_level, str(variables_req_found[g])))
 
-def atomix_check_requirements_metadata(nc, req_levels=['required', 'optional']):
+def atomix_check_requirements_metadata(nc, req_levels=['required', 'optional'], plot_found = False):
     """
     Checks if the netCDF file fulfills the requirements of an Atomix netCDF file.
 
@@ -169,13 +205,10 @@ def atomix_check_requirements_metadata(nc, req_levels=['required', 'optional']):
                     flag_has_attr_str = 'missing'
                     #print(e)
 
-                logger.info(' Parameter: {:s}: {:s}'.format(metadata_entry,flag_has_attr_str))
+                if (plot_found and flag_has_attr) or not(flag_has_attr):
+                    logger.info(' Parameter: {:s}: {:s}'.format(metadata_entry,flag_has_attr_str))
 
                 metadata_check[metadata_entry] = flag_has_attr
-
-
-
-
 
     logger.debug(funcname)
 
@@ -184,29 +217,34 @@ def atomix_check_requirements_metadata(nc, req_levels=['required', 'optional']):
 
 if __name__ == '__main__':
     config_help_filename = 'The netCDF filename to be checked'
-    config_help_verbose = 'Verbosity, can be added multiple times, if argument is not called: loglevel=INFO, once: loglevel=DEBUG'
+    config_help_verbose = 'Verbosity, can be added multiple times, if argument is not called: loglevel=INFO, once: both missing and found variables are printed, twice: loglevel=DEBUG'
     config_help_metadata = 'Add if metadata shall be checked'
     config_help_variables = 'Add if variables shall be checked'
     config_help_datalevel = 'List of datalevel to be checked, if not set, all level will be checked, equal to --datalevel="L1_converted,L2_cleaned,L3_spectra,L4_dissipation"'
     config_help_required = 'List of requirement levels to be checked, if not set, all level will be checked, equal to --required="required,highly-recommended,optional"'
+    config_help_print = 'Prints the ATOMIX structure to the command line in a csv format'
     parser = argparse.ArgumentParser()
-    parser.add_argument('filename', help=config_help_filename)
-    parser.add_argument('--verbose', '-v', action='count', help=config_help_verbose)
+    parser.add_argument('filename', nargs='?', help = config_help_filename)
+    parser.add_argument('--verbose', '-v', action='count', help = config_help_verbose)
     parser.add_argument('--metadata', action='store_true', help = config_help_metadata)
     parser.add_argument('--variables', action='store_true', help = config_help_variables)
     parser.add_argument('--datalevel', help = config_help_datalevel)
     parser.add_argument('--required', help = config_help_required)
+    parser.add_argument('--print_variables', action='store_true', help = config_help_print)
 
     print('Welcome to atomix_netcdf_check version {:s}'.format(version))
     args = parser.parse_args()
-
+    plot_found = False
+    logging_level = logging.INFO
     if (args.verbose is None):
         print('Logging level: INFO')
         logging_level = logging.INFO
     elif (args.verbose == 1):
+        plot_found = True
+    elif (args.verbose == 2):
+        plot_found = True
         print('Logging level: DEBUG')
         logging_level = logging.DEBUG
-
 
     logger.setLevel(logging_level)
 
@@ -235,10 +273,17 @@ if __name__ == '__main__':
 
     filename = args.filename
     #print('Checking variables of {:s}'.format(filename.split('/')[-1]))
-    nc = netCDF4.Dataset(filename)
-    if flag_variables:
-        atomix_check_requirements_variables(nc, datalevel = datalevel, req_levels=required)
-    if flag_metadata:
-        atomix_check_requirements_metadata(nc, req_levels = required)
+
+    if filename is not None:
+        nc = netCDF4.Dataset(filename)
+        if flag_variables:
+            atomix_check_requirements_variables(nc, datalevel = datalevel, req_levels=required, plot_found = plot_found)
+        if flag_metadata:
+            atomix_check_requirements_metadata(nc, req_levels = required, plot_found = plot_found)
+    else:
+        #print('Print variables',args.print_variables)
+        if args.print_variables == True:
+            atomix_atomix_structure_csv()
+
 
 
