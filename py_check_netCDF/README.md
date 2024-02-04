@@ -17,25 +17,36 @@ An overview about all options can be listed by:
 
 This will display the options
 
-    Welcome to atomix_netcdf_check version 0.5
+    Welcome to atomix_netcdf_check version 0.6
     usage: atomix_netcdf_check.py [-h] [--verbose] [--metadata] [--variables] [--datalevel DATALEVEL]
-                                [--required REQUIRED]
-                                filename
-
+                                  [--required REQUIRED] [--print_variables]
+                                  [filename]
+    
     positional arguments:
-    filename              The netCDF filename to be checked
-
+      filename              The netCDF filename to be checked
+    
     options:
-    -h, --help            show this help message and exit
-    --verbose, -v         Verbosity, can be added multiple times, if argument is not called: loglevel=INFO, once:
-                            loglevel=DEBUG
-    --metadata            Add if metadata shall be checked
-    --variables           Add if variables shall be checked
-    --datalevel DATALEVEL
+      -h, --help            show this help message and exit
+      --verbose, -v         Verbosity, can be added multiple times, if argument is not called: loglevel=INFO, once:
+                            both missing and found variables are printed, twice: loglevel=DEBUG
+      --metadata            Add if metadata shall be checked
+      --variables           Add if variables shall be checked
+      --datalevel DATALEVEL
                             List of datalevel to be checked, if not set, all level will be checked, equal to
                             --datalevel="L1_converted,L2_cleaned,L3_spectra,L4_dissipation"
-    --required REQUIRED   List of requirement levels to be checked, if not set, all level will be checked, equal to
+      --required REQUIRED   List of requirement levels to be checked, if not set, all level will be checked, equal to
                             --required="required,highly-recommended,optional"
+      --print_variables     Prints the ATOMIX structure to the command line in a csv format
+
+
+CSV list of netCDF Dimensions, Variables and Metadata
+-----------------------------------------------------
+
+To print a csv formatted output of the dimensions, variables and metadata call
+
+    atomix_netcdf_check.py --print_variables
+
+The output can be for example read with a spreadsheat program.
 
 Files
 -----
@@ -46,4 +57,4 @@ Files
 
 Limitations
 -----------
-Version 0.5 does not support required either/or variables, an [example](https://wiki.app.uib.no/atomix/index.php?title=Level_3_data_(shear_probes)) are ACC or VIB variables, defined as N_***_SENSORS in the specification.
+Version 0.6 does not support required either/or variables, an [example](https://wiki.app.uib.no/atomix/index.php?title=Level_3_data_(shear_probes)) are ACC or VIB variables, defined as N_***_SENSORS in the specification.
