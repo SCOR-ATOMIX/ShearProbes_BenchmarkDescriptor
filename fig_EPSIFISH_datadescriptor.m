@@ -5,17 +5,26 @@
 % PI: Arnaud LeBoyer, Scripps
 % January 2024
 % -----------------------------
+% -----------------------------
+% Data citation and where to download the netCDF file:
+% Le Boyer, A., Alford, M. H. & Couto, N. ATOMIX shear probes benchmark data: Dissipation measurements from the
+% Epsilometer collected in July 2021 in the Rockall Trough (west of Ireland). NERC EDS British Oceanographic Data Centre
+% NOC., https://doi.org/10.5285/0ebffc86-ed32-5dde-e063-6c86abc08b3a (2024).
+% -----------------------------
+
+
+
 clear
 close all
 % add the folder with the dependencies to your path
 addpath m_share
-% point to where the benchmark data file is, and load
+% point to where the downloaded benchmark NC data file is, and load
 data_path = 'C:\ILKER\Dropbox\ShearProbes\Data\EPSIFISH_BLT_NORTHATL\' % ==> EDIT THIS
 %data_path = 'C:\users\ngfif\Dropbox\ShearProbes\Data\EPSIFISH_BLT_NORTHATL\';
 file_nc='epsifish_epsilometer_blt_north_atl.nc';
 D=ATOMIX_load([data_path file_nc]); use D; clear D
 
-save_plot_flag = 1;  % ==> Set to 1 if you want to save the figure as a PDF file
+save_plot_flag = 0;  % ==> Set to 1 if you want to save the figure as a PDF file
 plot_out_name = 'EPSILOMETER_blt_north_atl.pdf' % ==> name of the PDF file to save
 %%
 % convert time to seconds elapsed
@@ -161,7 +170,7 @@ mean_e_std = mean(L4.EPSI_STD(:))
 factor_1 = exp(diss_ratio_limit*mean_e_std)
 patchx = [xli fliplr(xli) xli(1)];
 patchy = [xli*(1/factor_1) fliplr(xli)*factor_1 xli(1)*(1/factor_1)];
-hpa = patch(patchx,patchy,rgb('lightgray'),'LineStyle','none')
+hpa = patch(patchx,patchy,rgb('lightgray'),'LineStyle','none');
 set(gca,'xlim',xli);
 ch = get(gca,'children'); % this has the order
 set(gca,'children',ch([2:length(ch) 1])); % put the patch back
@@ -185,7 +194,7 @@ for I=1:3
     h1(1)=loglog(L3.KCYC(pick,:),L3.SH_SPEC_CLEAN(pick,:,1),'color',li(1,:));
     hold on
     h2(1)=loglog(L3.KCYC(pick,:),L3.SH_SPEC_CLEAN(pick,:,2),'color',li(2,:));
-    ee = L4.EPSI_FINAL(pick);
+    ee = L4.EPSI_FINAL(pick) % list dissipation estimates for the figure caption
 %    [nas,~] = lueck_spectrum(ee, L4.KVISC(pick),L3.KCYC(pick,:));
     [nas,~] = panchev_spectrum(ee, L4.KVISC(pick),L3.KCYC(pick,:)); %This processing used Panchev
     h3(1)=loglog(L3.KCYC(pick,:),nas,'color',[.6 .6 .6],'linew',1.2);
@@ -209,4 +218,15 @@ finish_fig(ax,[],[2 2 2 2 1 1],[],[],[],'times')
 if save_plot_flag
     exportgraphics(gcf,plot_out_name,'ContentType', 'vector');
 end
+
+%% Some details for the manus:
+fprintf(1,'EPSI estimates per probe: %d \n',numel(L4.EPSI_FINAL))
+fprintf(1,'Data points with both probes fail: %d \n',numel(intersect(ix_bad1,ix_bad2)))
+fprintf(1,'Data points with failure Q>0: [probe1, probe 2]: [%d , %d] \n', sum(L4.EPSI_FLAGS>0))
+fprintf(1,'Data points with Q=1 [probe 1, probe2]: [%d , %d] \n', sum(L4.EPSI_FLAGS==1))
+fprintf(1,'Data points with Q=2 [probe 1, probe2]: [%d , %d] \n', sum(L4.EPSI_FLAGS==2))
+fprintf(1,'Data points with Q=3 [probe 1, probe2]: [%d , %d] \n', sum(L4.EPSI_FLAGS==3))
+fprintf(1,'Data points with Q=4 [probe 1, probe2]: [%d , %d] \n', sum(L4.EPSI_FLAGS==4))
+fprintf(1,'Data points with Q=5 [probe 1, probe2]: [%d , %d] \n', sum(L4.EPSI_FLAGS==5))
+
 %%

@@ -1,4 +1,15 @@
+"""
+Python software to check Atomix netCDF files for consistency
 
+author(s): Peter Holtermann (peter.holtermann@io-warnemuende.de)
+
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 3 of the License, or any
+later version.
+
+"""
 
 # Structure from Atomix webpage https://wiki.app.uib.no/atomix/index.php (version from the 02. Nov.2023)
 atomix_structure = {}

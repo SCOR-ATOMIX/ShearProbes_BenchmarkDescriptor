@@ -4,11 +4,20 @@
 % Ilker Fer, University of Bergen, Norway
 % January 2024
 % -----------------------------
+% -----------------------------
+% Data citation and where to download the netCDF file:
+% Fer, I. ATOMIX shear probes benchmark data: a dissipation profile from the Faroe Bank Channel overflow obtained by a
+% vertical microstructure profiler in June 2012. NERC EDS British Oceanographic Data Centre NOC., 
+% https://doi.org/10.5285/05f21d1d-bf9c-5549-e063-6c86abc0b846 (2023).
+% -----------------------------
+
+
+
 clear
 close all
 % add the folder with the dependencies to your path
 addpath m_share
-% point to where the benchmark data file is, and load
+% point to where the downloaded benchmark NC data file is, and load
 data_path = 'C:\ILKER\Dropbox\ShearProbes\Data\VMP2000_FaroeBankChannel\' % ==> EDIT THIS
 %data_path = 'C:\users\ngfif\Dropbox\ShearProbes\Data\VMP2000_FaroeBankChannel\' % ==> EDIT THIS
 file_nc='VMP2000_FaroeBankChannel.nc';
@@ -192,14 +201,16 @@ end
 
 
 %% Some details for the manus:
-fprintf(1,'Data points with probe 1 fail: %d \n',numel(ix_bad1))
-fprintf(1,'Data points with probe 2 fail: %d \n',numel(ix_bad2))
+fprintf(1,'EPSI estimates per probe: %d \n',numel(L4.EPSI_FINAL))
 fprintf(1,'Data points with both probes fail: %d \n',numel(intersect(ix_bad1,ix_bad2)))
-
-% reasons:
-[L4.EPSI_FLAGS(intersect(ix_bad1,ix_bad2),1) L4.EPSI_FLAGS(intersect(ix_bad1,ix_bad2),2)] % both bad FOM
-L4.EPSI_FLAGS(ix_bad1,1) %2 are bad eps ratio, 7 are bad FOM
-L4.EPSI_FLAGS(ix_bad2,2) %4 are bad eps ratio, 5 are bad FOM
+fprintf(1,'Data points with failure Q>0: [probe1, probe 2]: [%d , %d] \n', sum(L4.EPSI_FLAGS>0))
+fprintf(1,'Data points with Q=1 [probe 1, probe2]: [%d , %d] \n', sum(L4.EPSI_FLAGS==1))
+fprintf(1,'Data points with Q=2 [probe 1, probe2]: [%d , %d] \n', sum(L4.EPSI_FLAGS==2))
+fprintf(1,'Data points with Q=3 [probe 1, probe2]: [%d , %d] \n', sum(L4.EPSI_FLAGS==3))
+fprintf(1,'Data points with Q=4 [probe 1, probe2]: [%d , %d] \n', sum(L4.EPSI_FLAGS==4))
+fprintf(1,'Data points with Q=5 [probe 1, probe2]: [%d , %d] \n', sum(L4.EPSI_FLAGS==5))
 
 %%
+
+
 

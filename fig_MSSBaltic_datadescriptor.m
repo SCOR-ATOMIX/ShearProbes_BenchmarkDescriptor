@@ -4,17 +4,23 @@
 % code template: Ilker Fer, University of Bergen, Norway
 % PI: Peter Holtermann, Leibniz Institute for Baltic Sea Research.
 % -----------------------------
+% Data citation and where to download the netCDF file:
+% Holtermann, P. ATOMIX shear probes benchmark data: Example microstructure data from a Sea & Sun Technology
+% MSS microstructure profiler, Bornholm Basin, Baltic Sea. NERC EDS British Oceanographic Data Centre NOC., 
+% https://doi.org/10.5285/0e35f96f-57e3-540b-e063-6c86abc06660 (2024).
+% -----------------------------
+
 clear
 close all
 % add the folder with the dependencies to your path
 addpath m_share
-% point to where the benchmark data file is, and load
+% point to where the downloaded benchmark NC data file is, and load
 data_path = 'C:\ILKER\Dropbox\ShearProbes\Data\MSS_BalticSea\' % ==> EDIT THIS
 %data_path = 'C:\users\ngfif\Dropbox\ShearProbes\Data\MSS_BalticSea\' % ==> EDIT THIS
 file_nc='MSS_Baltic.nc';
 D=ATOMIX_load([data_path file_nc]); use D; clear D
 
-save_plot_flag = 1;  % ==> Set to 1 if you want to save the figure as a PDF file
+save_plot_flag = 1;  %=0 ==> Set to 1 if you want to save the figure as a PDF file
 plot_out_name = 'MSS_BalticSea.pdf' % ==> name of the PDF file to save
 %%
 % convert time to seconds elapsed
@@ -84,12 +90,11 @@ h3=semilogy(TIME_ELAPSED_SEC_EPSI,L4.EPSI_FINAL,'ks','markerfacecolor','w','mark
 % semilogy(TIME_ELAPSED_SEC_EPSI(ix_bad1),L4.EPSI(ix_bad1,1),'rx','markersize',3);
 % semilogy(TIME_ELAPSED_SEC_EPSI(ix_bad2),L4.EPSI(ix_bad2,2),'rx','markersize',3);
 
-% mark the picked epsifinal for spectra 
-set(gca,'ylim',[1e-5 3e-3]);
-x=[TIME_ELAPSED_SEC_EPSI(picks)];   x=x(:)';  
+% mark the picked epsifinal for spectra:
+x=[TIME_ELAPSED_SEC_EPSI(picks)]; x=x(:)';  
 ax=axis; y1=ax(3)*ones(size(x)); y2=ax(4)*ones(size(x));
 x=[x;x]; y=[y1;y2];
-hvl=plot(x,y); clear x y y1 y2 ax
+hvl=plot(x,y); clear x y y1 y2 ax 
 uistack(hvl,'bottom');set(hvl,'color',[.5 .5 .5],'linew',1.2)
 
 
@@ -136,7 +141,7 @@ mean_e_std = mean(L4.EPSI_STD(:))
 factor_1 = exp(diss_ratio_limit*mean_e_std)
 patchx = [xli fliplr(xli) xli(1)];
 patchy = [xli*(1/factor_1) fliplr(xli)*factor_1 xli(1)*(1/factor_1)];
-hpa = patch(patchx,patchy,rgb('lightgray'),'LineStyle','none')
+hpa = patch(patchx,patchy,rgb('lightgray'),'LineStyle','none');
 set(gca,'xlim',xli);
 ch = get(gca,'children'); % this has the order
 set(gca,'children',ch([2:length(ch) 1])); % put the patch back
@@ -160,12 +165,12 @@ for I=1:length(picks)
     h1(1)=loglog(L3.KCYC(pick,:),L3.SH_SPEC_CLEAN(pick,:,1),'color',li(1,:));
     hold on
     h2(1)=loglog(L3.KCYC(pick,:),L3.SH_SPEC_CLEAN(pick,:,2),'color',li(2,:));
-    ee = L4.EPSI_FINAL(pick);
+    ee = L4.EPSI_FINAL(pick)
     [nas,~] = lueck_spectrum(ee, L4.KVISC(pick),L3.KCYC(pick,:));
     h3(1)=loglog(L3.KCYC(pick,:),nas,'color',[.6 .6 .6],'linew',1.2);
 end
 
-set(gca,'xlim',[.5 100],'ylim',[1e-8 2e-3])
+set(gca,'xlim',[.5 100],'ylim',[1e-8 2e-3]);
 grid
 xlabel('$k\ \ [\mathrm{cpm}]$','Interpreter','latex');
 ylabel('$\Psi\ [\mathrm{s^{-2}\,cpm^{-1}}]$','Interpreter','latex');
@@ -181,8 +186,19 @@ ax(6).XMinorGrid = 'off';ax(6).YMinorGrid = 'off';
 
 %% some cosmetics; putting a, b, etc.
 %finish_fig(ax,[],[],[],[],[],'times')
-finish_fig(ax,[],[1 1 1 2 1 1],[],[],[],'times')
+finish_fig(ax,[],[1 1 1 2 1 1],[],[],[],'times');
 if save_plot_flag
     exportgraphics(gcf,plot_out_name,'ContentType', 'vector');
 end
+
+%% Some details for the manus:
+fprintf(1,'EPSI estimates per probe: %d \n',numel(L4.EPSI_FINAL))
+fprintf(1,'Data points with both probes fail: %d \n',numel(intersect(ix_bad1,ix_bad2)))
+fprintf(1,'Data points with failure Q>0: [probe1, probe 2]: [%d , %d] \n', sum(L4.EPSI_FLAGS>0))
+fprintf(1,'Data points with Q=1 [probe 1, probe2]: [%d , %d] \n', sum(L4.EPSI_FLAGS==1))
+fprintf(1,'Data points with Q=2 [probe 1, probe2]: [%d , %d] \n', sum(L4.EPSI_FLAGS==2))
+fprintf(1,'Data points with Q=3 [probe 1, probe2]: [%d , %d] \n', sum(L4.EPSI_FLAGS==3))
+fprintf(1,'Data points with Q=4 [probe 1, probe2]: [%d , %d] \n', sum(L4.EPSI_FLAGS==4))
+fprintf(1,'Data points with Q=5 [probe 1, probe2]: [%d , %d] \n', sum(L4.EPSI_FLAGS==5))
+
 %%
