@@ -497,7 +497,7 @@ atomix_structure['metadata'][parameter]['required'] = required
 #atomix_structure['metadata'][parameter]['required'] = required
 
 parameter = 'conventions'
-description = 'A comma-separated list of the conventions that are followed by the dataset. e.g., CF-1.6, ACDD-1.3, ATOMIX'
+description = 'A comma-separated list of the conventions that are followed by the dataset. e.g., CF-1.6, ACDD-1.3, ATOMIX-1.0'
 required = 'required'
 atomix_structure['metadata'][parameter] = {}
 atomix_structure['metadata'][parameter]['description'] = description
