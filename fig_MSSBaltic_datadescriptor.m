@@ -78,7 +78,7 @@ plot(TIME_ELAPSED_SEC(sec),L2.VIB(sec,1),'color',li(1,:))
 %hold on
 %plot(L1.TIME_ELAPSED_SEC(sec),L2.ACC(sec,2)+offset,'color',li(2,:))
 set(gca,'ylim',[-.5 .5],'ytick',[-.4 0 .4]);
-hyla(end+1)=ylabel({'$VIB$','$[-]$'},'interpreter', 'latex');
+hyla(end+1)=ylabel({'$VIB$','$[\mathrm{m\,s^{-2}}]$'},'interpreter', 'latex');
 
 % Dissipation estimates from all probes and the final estimate
 subaxis(4);
